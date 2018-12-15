@@ -21,12 +21,28 @@ do
 done
 
 #install all python dependencies
-sudo pip3 install requests google-auth-oauthlib google-auth-httplib2 google-api-python-client #for google_services_helper
-sudo pip3 install jsonschema jsonpickle bcrypt yurl #for sanskrit_data
-sudo apt-get install -y libsm6 libxext6 libxrender-dev #required by opencv. if not exist already
-sudo pip3 install scikit-image numpy scipy Pillow matplotlib opencv-python # for docimage, very large libraries, takes some time.
-sudo pip3 install pymongo # for interaction with mongodb
-sudo pip3 install flask flask-cors flask-restplus flask-oauthlib furl # for flask. also installs jinja and werkzeug
+
+#for google_services_helper
+sudo apt-get install -y python3-requests
+sudo pip3 install google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+#for sanskrit_data
+sudo apt-get install -y python3-jsonschema python3-jsonpickle python3-bcrypt
+sudo pip3 install yurl
+
+#required by opencv. if not exist already
+sudo apt-get install -y libsm6 libxext6 libxrender-dev
+
+# for docimage, very large libraries, takes some time.
+sudo apt-get install -y python3-numpy python3-scipy python3-matplotlib python3-opencv
+sudo pip3 install scikit-image Pillow
+
+# for interaction with mongodb
+sudo apt-get install -y python3-pymongo
+
+# for flask. also installs jinja and werkzeug
+sudo apt-get install -y python3-flask python3-flask-oauthlib python3-furl
+sudo pip3 install flask-cors flask-restplus
 sudo pip3 install indic_transliteration
 
 
