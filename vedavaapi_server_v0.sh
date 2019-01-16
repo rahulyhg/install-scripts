@@ -1,3 +1,5 @@
+#  start from https://www.ubuntu.com/download/server
+
 export DEBIAN_FRONTEND=noninteractive
 
 #enable universe repos if already not
