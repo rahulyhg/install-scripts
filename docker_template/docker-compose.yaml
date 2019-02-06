@@ -1,0 +1,24 @@
+version: '3'
+services:
+  vedavaapi_v1:
+    build: .
+    ports:
+     - "5000:5000"
+     - "8002:80"
+    container_name: vedavaapi_v1
+    depends_on:
+      - vedavaapi_mongo
+    networks:
+      - vedavaapi_nw
+  vedavaapi_mongo:
+    image: "mongo"
+    container_name: vedavaapi_mongo
+    networks:
+      - vedavaapi_nw
+    expose: 
+      - "27017"
+
+networks:
+  vedavaapi_nw:
+    driver: bridge
+
