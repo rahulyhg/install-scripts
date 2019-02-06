@@ -54,10 +54,8 @@ RUN python3 genconf.py -i ${DATA_DIR} -o --db_type "mongo" --db_host "mongodb://
 USER root
 ARG wsgi_conf_dir="${DATA_DIR}/conf/_wsgi"
 ARG http_conf_file="${wsgi_conf_dir}/apache_conf.conf"
-ARG https_conf_file="${wsgi_conf_dir}/apache_https_conf.conf"
 ARG sites_available_dir="/etc/apache2/sites-available"
 ARG sa_http_conf_link_path="${sites_available_dir}/vedavaapi_api.conf"
-ARG sa_https_conf_link_path="${sites_available_dir}/vedavaapi_api-le-ssl.conf"
 ARG sites_enabled_dir="/etc/apache2/sites-enabled"
 
 COPY "apache_http.conf" ${http_conf_file}
