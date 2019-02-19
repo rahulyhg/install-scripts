@@ -3,7 +3,6 @@
 export DEBIAN_FRONTEND=noninteractive
 
 parse_opts() {
-	install_dev_dependencies="false"
 	org_name="vedavaapi"
 	org_label="Vedavaapi"
 	client_name="Vedavaapi Application Client 1"
@@ -21,11 +20,6 @@ parse_opts() {
 	key="$1"
 
 	case $key in
-	    --install_dev_dependencies)
-	    install_dev_dependencies="$2"
-	    shift # past argument
-	    shift # past value
-	    ;;
 	    --org_name)
 	    org_name="$2"
 	    shift # past argument
@@ -129,19 +123,6 @@ check_opts() {
 	fi
 }
 
-install_dependencies() {
-	sudo apt-get -yq install software-properties-common
-	sudo apt-add-repository universe
-	sudo apt-get -yq  update
-
-	sudo apt-get -yq install python3 python3-requests python3-bcrypt curl git
-	curl -fsSL https://get.docker.com -o get-docker.sh
-	sudo sh get-docker.sh
-	sudo usermod -aG docker $USER
-	sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
-}
-
 run_pre_setup() {
 	python3 pre_setup.py "$@"
 }
@@ -170,13 +151,10 @@ invoke_docker_compose() {
 	export_env_vars;
 	cp -r "conf_data" "vedavaapi_server_v1/"
 	cd "vedavaapi_server_v1/";
-	sudo docker-compose -p "${docker_project_name}" up -d --build --no-recreate
+	docker-compose -p "${docker_project_name}" up -d --build --no-recreate
 }
 
 parse_opts "$@";
 check_opts;
-if [ ${install_dev_dependencies} == 'true' ]; then
-	install_dependencies
-fi
 run_pre_setup "$@";
 invoke_docker_compose;
