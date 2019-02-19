@@ -171,7 +171,7 @@ invoke_docker_compose() {
 
 parse_opts "$@";
 check_opts;
-if [ install_dev_dependencies == 'true' ]; then
+if [ ${install_dev_dependencies} == 'true' ]; then
 	install_dependencies
 fi
 run_pre_setup "$@";
