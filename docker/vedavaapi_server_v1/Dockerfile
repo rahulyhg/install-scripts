@@ -25,30 +25,33 @@ RUN apt-get -yq install python3-requests; \
 	pip3 install iiif_prezi
 
 # now clone vedavaapi repositories 
-ENV ROOT_DIR /vedavaapi
+ENV INSTALL_DIR /vedavaapi
 ENV DATA_DIR /opt/vedavaapi
-RUN mkdir -p "$ROOT_DIR"; \
+RUN mkdir -p "$INSTALL_DIR"; \
 				mkdir -p "$DATA_DIR";
 
-RUN chown www-data ${ROOT_DIR}
+RUN chown www-data ${INSTALL_DIR}
 RUN chown www-data ${DATA_DIR}
 USER www-data
 
-WORKDIR $ROOT_DIR
+WORKDIR $INSTALL_DIR
 RUN git clone --depth 1 https://github.com/loris-imageserver/loris.git
 
-# get creds
-RUN wget --no-check-certificate "https://apps.vedavaapi.org/creds/creds.zip" -O creds.zip; \
-	unzip creds.zip;
-
 # get git repos
-ARG repos_script_file="v1_repos.sh"
-COPY ${repos_script_file} ./
-RUN bash v1_repos.sh
+ARG vedavaapi_repos_clone_script="clone_vedavaapi_repos.sh"
+COPY ${vedavaapi_repos_clone_script} ./
+RUN bash ${vedavaapi_repos_clone_script}
+
+ARG conf_data_dir_path
+COPY ${conf_data_dir_path} ./conf_data
 
 # generate server config
-WORKDIR "$ROOT_DIR/vedavaapi_api"
-RUN python3 genconf.py -i ${DATA_DIR} -o --db_type "mongo" --db_host "mongodb://vedavaapi_mongo:27017" --creds_dir "${ROOT_DIR}/creds" -d --host "0.0.0.0" -p 5000 --server_name vv.org accounts objstore iiif_presentation iiif_image
+WORKDIR "$INSTALL_DIR/vedavaapi_api"
+ARG mongo_host
+ARG mongo_port
+ARG url_mount_path
+ARG services
+RUN python3 genconf.py -i ${DATA_DIR} -o --db_type "mongo" --db_host "mongodb://${mongo_host}:{mongo_port}" --creds_dir "${INSTALL_DIR}/conf_data/creds" -d --host "0.0.0.0" -p 5000 --url_mount_path "${url_mount_path}" --orgs_config_file_path "${INSTALL_DIR}/conf_data/orgs.json"  --services "${services}"
 
 # symlink apache-conf
 USER root
@@ -58,7 +61,7 @@ ARG sites_available_dir="/etc/apache2/sites-available"
 ARG sa_http_conf_link_path="${sites_available_dir}/vedavaapi_api.conf"
 ARG sites_enabled_dir="/etc/apache2/sites-enabled"
 
-COPY "apache_http.conf" ${http_conf_file}
+# COPY "apache_http.conf" ${http_conf_file}
 RUN ln -s ${http_conf_file} ${sa_http_conf_link_path}; \
 	ln -s ${sa_http_conf_link_path} "${sites_enabled_dir}/vedavaapi_api.conf"; 
 

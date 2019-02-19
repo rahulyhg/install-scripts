@@ -2,34 +2,41 @@ version: '3'
 services:
   # vedavaapi api container service
   vedavaapi_v1:
-    build: .
+    build:
+      context: .
+      args:
+        mongo_host: vedavaapi_mongo
+        mongo_port: "27017"
+        services: "${services}"
+        conf_data_dir_path: "${conf_data_dir_path}"
+        url_mount_path: "${url_mount_path}"
     depends_on:
       - vedavaapi_mongo
-    container_name: vedavaapi_v1
-    networks:
-      - vedavaapi_nw
+    # container_name: vedavaapi_v1
+    # networks:
+      # - vedavaapi_nw
     volumes:
       #route to named volume
       - "vedavaapi_v1_data:/opt/vedavaapi"
     ports:
-     - "5000:5000"
-     - "8002:80"
+     - "${vedavaapi_test_port}:5000"
+     - "${vedavaapi_api_port}:80"
 
    #mongodb container service
   vedavaapi_mongo:
     image: "mongo"
-    container_name: vedavaapi_mongo
-    networks:
-      - vedavaapi_nw
+    # container_name: vedavaapi_mongo
+    # networks:
+      # - vedavaapi_nw
     volumes: 
       - "vedavaapi_mongo_data:/data/db"
     expose: 
       - "27017"
 
 # define custom networks
-networks:
-  vedavaapi_nw:
-    driver: bridge
+# networks:
+  # vedavaapi_nw:
+    # driver: bridge
 
 # define custom named volumes.
 volumes:
@@ -38,10 +45,10 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/data/vedavaapi_mongo'
+      device: '${mongo_data_dir}'
   vedavaapi_v1_data:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/data/vedavaapi'
+      device: '${vedavaapi_data_dir}'
