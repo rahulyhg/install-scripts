@@ -130,6 +130,10 @@ check_opts() {
 }
 
 install_dependencies() {
+	sudo apt-get -yq install software-properties-common
+	sudo apt-add-repository universe
+	sudo apt-get -yq  update
+
 	sudo apt-get -yq install python3 python3-requests python3-bcrypt curl git
 	curl -fsSL https://get.docker.com -o get-docker.sh
 	sudo sh get-docker.sh
@@ -154,10 +158,10 @@ export_env_vars() {
 
 setup_volume_dirs() {
 	if [ ! -d "${mongo_data_dir}" ]; then
-		sudo mkdir "${mongo_data_dir}"
+		sudo mkdir -p "${mongo_data_dir}"
 	fi
 	if [ ! -d "${vedavaapi_data_dir}" ]; then
-		sudo mkdir "${vedavaapi_data_dir}"
+		sudo mkdir -p "${vedavaapi_data_dir}"
 	fi
 }
 
@@ -166,7 +170,7 @@ invoke_docker_compose() {
 	export_env_vars;
 	cp -r "conf_data" "vedavaapi_server_v1/"
 	cd "vedavaapi_server_v1/";
-	docker-compose -p "${docker_project_name}" up -d --build --no-recreate
+	sudo docker-compose -p "${docker_project_name}" up -d --build --no-recreate
 }
 
 parse_opts "$@";
