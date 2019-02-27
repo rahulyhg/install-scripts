@@ -128,13 +128,14 @@ run_pre_setup() {
 }
 
 export_env_vars() {
-	export conf_data_dir_path="conf_data";
-	export services="${services}"
-	export url_mount_path="${url_mount_path}"
-	export mongo_data_dir="${mongo_data_dir}"
-	export vedavaapi_data_dir="${vedavaapi_data_dir}"
-	export vedavaapi_api_port="${vedavaapi_api_port}"
-	export vedavaapi_test_port="${vedavaapi_test_port}"
+	echo "COMPOSE_PROJECT_NAME=${docker_project_name}" > "docker_context/.env";
+	echo "conf_data_dir_path=conf_data" >> "docker_context/.env";
+	echo "services=${services}" >> "docker_context/.env";
+	echo "url_mount_path=${url_mount_path}" >> "docker_context/.env";
+	echo "mongo_data_dir=${mongo_data_dir}" >> "docker_context/.env";
+	echo "vedavaapi_data_dir=${vedavaapi_data_dir}" >> "docker_context/.env";
+	echo "vedavaapi_api_port=${vedavaapi_api_port}" >> "docker_context/.env";
+	echo "vedavaapi_test_port=${vedavaapi_test_port}" >> "docker_context/.env";
 }
 
 setup_volume_dirs() {
@@ -149,9 +150,10 @@ setup_volume_dirs() {
 invoke_docker_compose() {
 	setup_volume_dirs;
 	export_env_vars;
-	cp -r "conf_data" "vedavaapi_server_v1/"
-	cd "vedavaapi_server_v1/";
-	docker-compose -p "${docker_project_name}" up -d --build --no-recreate
+	cp -r "conf_data" "docker_context/"
+	cd "docker_context/";
+	# docker-compose -p "${docker_project_name}" up -d --build --no-recreate
+	docker-compose up -d --build --no-recreate
 }
 
 parse_opts "$@";

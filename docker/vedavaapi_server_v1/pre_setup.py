@@ -42,7 +42,7 @@ def main(argv):
         '--instance_name', help='a symbolic name for this instance', dest='instance_name', default='Vedavaapi Platform Application'
     )
     parser.add_argument(
-        '--redirect_uris', help='redirect_uris seperated by space', dest='redirect_uris', required=True
+        '--redirect_uris', help='redirect_uris seperated by space', dest='redirect_uris', required=False, default=''
     )
     parser.add_argument('--client_type', help='type of client public or private', dest='client_type', default='private')
 
@@ -88,7 +88,7 @@ def main(argv):
     if args.main_platform_url_root:
         client_post_url = os.path.join(args.main_platform_url_root, 'accounts/oauth/v1/clients')
         client_json = {"jsonClass": "OAuth2Client", "name": args.instance_name}
-        client_json['redirect_uris'] = args.redirect_uris.split(' ')
+        client_json['redirect_uris'] = (args.redirect_uris or '').split(' ')
 
         session = requests.Session()
 

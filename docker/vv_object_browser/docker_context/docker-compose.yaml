@@ -1,0 +1,11 @@
+version: '3'
+services:
+  # vedavaapi api container service
+  vv_object_browser:
+    build:
+      context: .
+      args:
+        conf_data_dir_path: "${conf_data_dir_path}"
+ 
+    ports:
+     - "${forward_port}:80"
