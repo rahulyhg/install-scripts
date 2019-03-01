@@ -38,6 +38,7 @@ WORKDIR $INSTALL_DIR
 RUN git clone --depth 1 https://github.com/loris-imageserver/loris.git
 
 # get git repos
+RUN echo 'version v1.1a1' > version-info.txt
 ARG vedavaapi_repos_clone_script="clone_vedavaapi_repos.sh"
 COPY ${vedavaapi_repos_clone_script} ./
 RUN bash ${vedavaapi_repos_clone_script}
